@@ -21,4 +21,4 @@ jquery seaofclouds URL: http://tweet.seaofclouds.com/
 
 	Call the widget and place it where you want to show your tweets
 
-	#cb.widget('TweedFeed',{settings={username='["gratzc"]'}})#
+	#cb.widget('TweetFeed',{settings={"username":["gratzc"]}})#

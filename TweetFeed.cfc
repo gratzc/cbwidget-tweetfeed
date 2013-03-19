@@ -1,4 +1,4 @@
-﻿/**
+/**
 * A Widget to use that uses the jquery Tweet libary and Twitter Search API to display a list of tweets
 * jquery seaofclouds URL: http://tweet.seaofclouds.com/
 	Optional ContentBox setting:
@@ -71,7 +71,6 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 	* @settings json struct of settings, will override default and stored settings
 	*/
 	any function renderIt(settings={}){
-		var rString = '<div class="tweet"></div>';
 		if(!isStruct(arguments.settings)){arguments.settings=deserializeJSON(arguments.settings);}
 		//combine the passed in settings with the defaults
 		var appliedSetting=getAppliedSetting(arguments.settings);
@@ -79,6 +78,7 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 		addAssets(appliedSetting);
 		//add the javascript call
 		addJS(appliedSetting);
+		var rString = '<div class="tf_title">#appliedSetting.title#</div><div class="tweet"></div>';
 		return rString;
 	}
 

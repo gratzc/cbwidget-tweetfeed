@@ -22,7 +22,7 @@
 
 	Call the widget and place it where you want to show your tweets
 
-	#cb.widget('TweedFeed',{settings={username='["gratzc"]'}})#
+	#cb.widget('TweetFeed',{settings={"username":["gratzc"]}})#
 
 	*/
 component extends="contentbox.model.ui.BaseWidget" singleton{
@@ -33,14 +33,16 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 
 		// Widget Properties
 		setPluginName("TweetFeed");
-		setPluginVersion("1.0");
+		setPluginVersion("1.01");
 		setPluginDescription("A Widget to use that uses the jquery Tweet libary and Twitter Search API to display a list of tweets");
 		setPluginAuthor("Computer Know How");
 		setPluginAuthorURL("www.compknowhow.com");
 		setForgeBoxSlug("cbwidget-tweetfeed");
+		setCategory( "Miscellaneous" );
 
 		var cb = getPlugin(plugin='CBHelper',module='contentbox');
 
+		var event = getRequestContext();
 		variables.tfsettings = {};
 		variables.tfsettings.title = cb.setting("tf_title","Twitter Updates");
 		variables.tfsettings.loadingtext = cb.setting("tf_loadingtext","loading tweets...");
@@ -56,7 +58,7 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 		variables.tfsettings.autojointextreply = cb.setting("tf_autojointextreply","i replied to");
 		variables.tfsettings.autojointexturl = cb.setting("tf_autojointexturl","i am looking at");
 		variables.tfsettings.query = cb.setting("tf_query","");
-		var assetRoot = cb.widgetRoot() & "/tweetFeed/";
+		var assetRoot = event.getModuleRoot('contentbox') & "/widgets/tweetFeed";
 		var css = assetRoot&'/jquery.tweet.css';
 		var js =  assetRoot&'/jquery.tweet.js';
 		variables.tfsettings.cssFile = cb.setting("tf_cssFile",css);
@@ -66,10 +68,11 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 
 	/**
 	* adds assets and javascript to page, return div to fill with tweets
-	* @settings struct of settings, will override default and stored settings
+	* @settings json struct of settings, will override default and stored settings
 	*/
 	any function renderIt(settings={}){
 		var rString = '<div class="tweet"></div>';
+		if(!isStruct(arguments.settings)){arguments.settings=deserializeJSON(arguments.settings);}
 		//combine the passed in settings with the defaults
 		var appliedSetting=getAppliedSetting(arguments.settings);
 		//add the jquery assets needed
@@ -92,7 +95,7 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 			$(document).ready(function(){
 				$(".tweet").tweet({
 					loading_text: "#settings.loadingtext#",
-					username: #settings.username#,
+					username: #serializeJSON(settings.username)#,
 					avatar_size: #settings.avatarsize#,
 					count: #settings.count#,
 					intro_text: "#settings.introtext#",
@@ -110,9 +113,8 @@ component extends="contentbox.model.ui.BaseWidget" singleton{
 		$htmlHead(JS);
 	}
 
-	private any function getAppliedSetting(settings) {
+	private any function getAppliedSetting(settings={}) {
 		var appliedSetting = {};
-		var i = 1;
 		structAppend(appliedSetting, variables.tfsettings, true);
 		structAppend(appliedSetting, arguments.settings, true);
 		return appliedSetting;
